@@ -27,7 +27,8 @@ public class BuscadorDemo2 {
     
     while (index < totalCarpetas) {
     	File[] arrFiless = carpetas.get(index).listFiles();
-    	if(!(arrFiles == null)) {
+    	if(!(arrFiless == null)) {
+    		
     		for (File file : arrFiless) {
                 if (!file.getName().equals("tmp") && !file.getName().equals("sys") && !file.getName().equals("proc")) {
                 	Thread hilo = new Thread(new Buscador1(file));
@@ -48,22 +49,7 @@ public class BuscadorDemo2 {
         hilos.clear();
         index++;
     }
-    for (File file : arrFiles) {
-        if (!file.getName().equals("tmp") && !file.getName().equals("sys") && !file.getName().equals("proc")) {
-            //System.out.println(file.getAbsolutePath());
-            Thread hilo = new Thread(new Buscador1(file));
-            hilos.add(hilo); 
-            hilo.start(); 
-        } 
-    }
 
-    for (Thread hilo : hilos) {
-        try {
-            hilo.join(); 
-        } catch (InterruptedException e) {
-            System.out.println("El hilo fue interrumpido.");
-        }
-    }
     long end = System.currentTimeMillis(); 
 
     //System.out.println("-----------------------------------------------------");
