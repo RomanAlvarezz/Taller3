@@ -1,0 +1,78 @@
+package TpBorrador1;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BuscadorDemo2 {
+	public static void main(String[] args) {
+    File dir = new File("C:\\");  	
+    File[] arrFiles = dir.listFiles(); 
+    List<String> rutasEncontradas = new ArrayList<>();
+    Buscador1.setRutas(rutasEncontradas);
+    Buscador1.setArchivo("textito.txt");
+    
+    List<Thread> hilos = new ArrayList<>();
+    List<File> carpetas = new ArrayList<>();
+
+    for (File file : arrFiles) {
+        if (file.isDirectory() && !file.getName().equals("tmp") && !file.getName().equals("sys") && !file.getName().equals("proc")) {
+            carpetas.add(file);
+        }
+    }
+    
+    int totalCarpetas = carpetas.size();
+    int index = 0;
+    
+    long start = System.currentTimeMillis();
+    
+    while (index < totalCarpetas) {
+    	File[] arrFiless = carpetas.get(index).listFiles();
+    	if(!(arrFiles == null)) {
+    		for (File file : arrFiless) {
+                if (!file.getName().equals("tmp") && !file.getName().equals("sys") && !file.getName().equals("proc")) {
+                	Thread hilo = new Thread(new Buscador1(file));
+                    hilos.add(hilo);
+                    hilo.start();
+                }
+            }
+
+            for (Thread hilo : hilos) {
+                try {
+                    hilo.join();
+                } catch (InterruptedException e) {
+                    System.out.println("El hilo fue interrumpido.");
+                }
+            }
+    	}
+
+        hilos.clear();
+        index++;
+    }
+    for (File file : arrFiles) {
+        if (!file.getName().equals("tmp") && !file.getName().equals("sys") && !file.getName().equals("proc")) {
+            //System.out.println(file.getAbsolutePath());
+            Thread hilo = new Thread(new Buscador1(file));
+            hilos.add(hilo); 
+            hilo.start(); 
+        } 
+    }
+
+    for (Thread hilo : hilos) {
+        try {
+            hilo.join(); 
+        } catch (InterruptedException e) {
+            System.out.println("El hilo fue interrumpido.");
+        }
+    }
+    long end = System.currentTimeMillis(); 
+
+    //System.out.println("-----------------------------------------------------");
+    System.out.println("Tiempo de Ejecucion: " + (end - start));
+    //synchronized (rutasEncontradas) { 
+    	System.out.println("Cantidad Rutas Encontradas: " + rutasEncontradas.size());
+        for (String ruta : rutasEncontradas) {
+            System.out.println(ruta);
+        }
+        //}
+  }
+}
